@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database Service
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: productdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      # Expose port 5432 on the host (optional, for local client connection)
+      - "5432:5432"
+    volumes:
+      # Persist database data
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Spring Boot Application Service
+  app:
+    build: .
+    restart: always
+    ports:
+      # Expose the application port
+      - "8080:8080"
+    depends_on:
+      # Ensure database is up before starting the application
+      - db
+    environment:
+      # Application environment variables (should match application.properties)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/productdb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    # Give the DB time to start up (critical for a smooth startup)
+    command: ["./wait-for-it.sh", "db:5432", "--", "java", "-jar", "/app/app.jar"]
+
+volumes:
+  postgres_data:
