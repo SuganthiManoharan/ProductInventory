@@ -69,7 +69,7 @@ public class ProductService {
 
     //  DELETE /products/{id}: Delete product
     @Transactional
-    public void deleteProduct(Long id) {
+    public void deleteProduct(Long id) throws ResourceNotFoundException{
         // Find the product first to ensure it exists before attempting deletion
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException("Product not found with id: " + id);

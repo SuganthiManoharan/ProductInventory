@@ -9,6 +9,11 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn/
 COPY pom.xml .
+# Copy the wait-for-it script into the working directory (/app)
+COPY wait-for-it.sh ./
+
+# Make the script executable
+RUN chmod +x ./wait-for-it.sh
 
 # Install dependencies (this layer is only rebuilt if pom.xml changes)
 RUN chmod +x mvnw
@@ -37,7 +42,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # =================================================================
-# Stage 4: Final Runtime Image
+# Stage 3: Final Runtime Image
 # A minimal JRE for running the application
 # =================================================================
 FROM eclipse-temurin:21-jre-alpine AS final

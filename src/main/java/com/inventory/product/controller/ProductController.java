@@ -27,6 +27,7 @@ public class ProductController {
 
     @GetMapping("/getAllProducts")
     public List<Product> listAllProducts() {
+
         return productService.findAll(); // 200 OK by default
     }
 
